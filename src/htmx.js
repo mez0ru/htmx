@@ -736,7 +736,13 @@ return (function () {
                 } else {
                     var result = querySelectorAllExt(elt, attrTarget);
                     if (result.length === 0) {
-                        logError('The selector "' + attrTarget + '" on ' + attrName + " returned no matches!");
+                        var details = {shouldPrint: true, include: getAttributeValue(elt, "hx-include")}
+                        triggerEvent(elt, 'htmx:includeError', details);
+                        if (details.shouldPrint) {
+                            logError('The selector "' + attrTarget + '" on ' + attrName + " returned no matches!");
+                            triggerEvent(elt, "htmx:error", {errorInfo:details})
+                        }
+                        // logError('The selector "' + attrTarget + '" on ' + attrName + " returned no matches!");
                         return [DUMMY_ELT]
                     } else {
                         return result;
